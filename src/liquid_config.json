@@ -1,0 +1,137 @@
+{
+  "version": "1.0",
+  "task": "render_liquid_text",
+  "canvas": {
+    "width_px": 2048,
+    "height_px": 2048,
+    "background": {
+      "type": "transparent",
+      "color": "#00000000"
+    },
+    "dpi": 300
+  },
+  "typography": {
+    "style": "cursive_brush_script_liquid",
+    "font_family_preferred": ["Custom-Resin-Script.ttf"],
+    "font_family_fallback": ["Lobster-Regular.ttf", "Pacifico.ttf", "GreatVibes-Regular.ttf", "Allura-Regular.otf", "BallegScript.ttf"],
+    "stroke_weight_pct": 95,
+    "letter_spacing_pct": -2,
+    "line_height_pct": 92,
+    "cap_style": "rounded",
+    "join_style": "rounded"
+  },
+  "liquid_effect": {
+    "enabled": true,
+    "drip_density": "medium",
+    "drip_length_px_range": [18, 120],
+    "drip_width_pct_of_stroke": [60, 110],
+    "gravity_direction_deg": 90,
+    "gloss": {
+      "enabled": true,
+      "specular_intensity": 0.55,
+      "specular_size": 0.35,
+      "highlight_direction_deg": 300
+    },
+    "edge_softness": 0.12,
+    "inner_shadow": {
+      "enabled": true,
+      "opacity": 0.25,
+      "blur_px": 6,
+      "offset_px": [0, 3]
+    }
+  },
+  "glow": {
+    "enabled": true,
+    "mode": "outer",
+    "intensity": "medium",
+    "radius_px": 140,
+    "spread_pct": 35,
+    "per_word_color_glow": true
+  },
+  "stroke_outline": {
+    "enabled": false,
+    "color": "#000000",
+    "width_px": 0
+  },
+  "palettes": {
+    "gold": { "fill": "#ffde59", "glow": "#ffde59" },
+    "orange": { "fill": "#ff7f00", "glow": "#ff7f00" },
+    "blue_dark": { "fill": "#0033cc", "glow": "#0033cc" },
+    "wine": { "fill": "#800020", "glow": "#800020" },
+    "white": { "fill": "#ffffff", "glow": "#ffffff" },
+    "black": { "fill": "#111111", "glow": "#000000" },
+    "flat_white": { "fill": "#f8f8f8", "glow": "#f8f8f8", "gloss": false }
+  },
+  "patterns": {
+    "camo_military_green": {
+      "type": "camo",
+      "colors": ["#2f3e1f", "#4a5f34", "#7b8f4b", "#0e1a0f", "#a4b07a"],
+      "scale_pct": 85,
+      "contrast": 0.12
+    },
+    "camo_yellow_gold": {
+      "type": "camo",
+      "colors": ["#ffde59", "#f2c335", "#d6a62a", "#8c6f1d", "#fff1a6"],
+      "scale_pct": 85,
+      "contrast": 0.14
+    }
+  },
+  "layout": {
+    "composition": "stacked",
+    "align": "center",
+    "max_width_pct": 86,
+    "line_break_rules": {
+      "auto_break": true,
+      "prefer_break_after_words": ["Liquid", "Orange", "Wine"]
+    }
+  },
+  "export": {
+    "format": "png",
+    "transparent_background": true,
+    "optimize_for": ["canva", "social"],
+    "color_profile": "sRGB"
+  },
+  "presets": [
+    {
+      "name": "LIQUID_GOLD",
+      "text_lines": ["Liquid", "Gold"],
+      "colors_per_word": ["white", "gold"]
+    },
+    {
+      "name": "ORANGE_BLUE_TRIPPIN",
+      "text_lines": ["Orange", "Blue", "Trippin’"],
+      "colors_per_word": ["orange", "blue_dark", "white"]
+    },
+    {
+      "name": "WINE_AND_GOLD",
+      "text_lines": ["Wine", "&", "Gold"],
+      "colors_per_word": ["wine", "black", "gold"],
+      "ampersand_override": { "fill": "#0a1a3a" }
+    },
+    {
+      "name": "JP_RESIN_CAMO_GREEN",
+      "text_lines": ["JP", "Resin"],
+      "fill_pattern_per_word": ["camo_military_green", "camo_military_green"],
+      "glow": { "enabled": false }
+    },
+    {
+      "name": "JP_RESIN_CAMO_YELLOW",
+      "text_lines": ["JP", "Resin"],
+      "fill_pattern_per_word": ["camo_yellow_gold", "camo_yellow_gold"],
+      "glow": { "enabled": false }
+    },
+    {
+      "name": "WHITE_FLAT",
+      "text_lines": ["Plano", "Blanco"],
+      "colors_per_word": ["flat_white", "flat_white"],
+      "glow": { "enabled": false }
+    }
+  ],
+  "notes": {
+    "render_rules": [
+      "Usar fondo 100% transparente para que se anime fácil en Canva",
+      "Mantener el goteo principal en los remates inferiores de cada palabra",
+      "Si una palabra va en patrón camo, desactivar trazo externo y mantener brillo bajo"
+    ]
+  }
+}

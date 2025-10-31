@@ -7,6 +7,7 @@ palettes, glow, and drip effects and renders presets to PNG files.
 from __future__ import annotations
 
 import json
+import os
 import random
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -409,11 +410,17 @@ class LiquidTextRenderer:
 # --------------------------- Configuration helpers -------------------------
 
 
-def load_default_config() -> GeneratorConfig:
-    """Load the bundled generator configuration."""
-    config_path = Path(__file__).with_name("liquid_config.json")
+def load_config(config_path: Optional[Path] = None) -> GeneratorConfig:
+    """Load a generator configuration from disk."""
+    if config_path is None:
+        config_path = Path(__file__).with_name("liquid_config.json")
     data = json.loads(config_path.read_text(encoding="utf-8"))
     return GeneratorConfig.from_dict(data)
+
+
+def load_default_config() -> GeneratorConfig:
+    """Backward compatible helper that loads the bundled configuration."""
+    return load_config()
 
 
 def render_all_presets(output_dir: Path, config: Optional[GeneratorConfig] = None) -> Dict[str, Path]:
@@ -423,6 +430,28 @@ def render_all_presets(output_dir: Path, config: Optional[GeneratorConfig] = Non
     for preset in cfg.presets:
         outputs[preset.name] = renderer.render_preset(preset.name, output_dir)
     return outputs
+
+
+def load_env_file(path: Path, *, override: bool = False) -> Dict[str, str]:
+    """Parse a simple KEY=VALUE .env file and inject it into os.environ."""
+    if not path.exists():
+        return {}
+
+    loaded: Dict[str, str] = {}
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip("'\"")
+        if not override and key in os.environ:
+            continue
+        os.environ[key] = value
+        loaded[key] = value
+    return loaded
 
 
 if __name__ == "__main__":
@@ -437,18 +466,46 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("output"),
         help="Directory where rendered images will be saved.",
+    )
+    parser.add_argument(
+        "--config",
+        type=Path,
+        help="Path to a custom liquid configuration JSON file.",
+    )
+    parser.add_argument(
+        "--env-file",
+        type=Path,
+        help="Path to a .env file to load before rendering (defaults to ./.env).",
     )
     args = parser.parse_args()
 
-    config = load_default_config()
+    env_path = args.env_file or Path(".env")
+    loaded_env = load_env_file(env_path)
+    if loaded_env:
+        print(f"Loaded environment variables from {env_path}")
+
+    if args.config is not None:
+        config_path: Optional[Path] = args.config
+    else:
+        config_env = os.environ.get("LIQUID_CONFIG_PATH")
+        config_path = Path(config_env) if config_env else None
+
+    config = load_config(config_path)
     renderer = LiquidTextRenderer(config)
 
-    if args.preset:
-        path = renderer.render_preset(args.preset, args.output)
-        print(f"Rendered {args.preset} -> {path}")
+    if args.output is not None:
+        output_dir = args.output
     else:
-        outputs = render_all_presets(args.output, config)
+        output_env = os.environ.get("LIQUID_OUTPUT_DIR")
+        output_dir = Path(output_env) if output_env else Path("output")
+
+    preset_name = args.preset or os.environ.get("LIQUID_PRESET")
+
+    if preset_name:
+        path = renderer.render_preset(preset_name, output_dir)
+        print(f"Rendered {preset_name} -> {path}")
+    else:
+        outputs = render_all_presets(output_dir, config)
         for name, path in outputs.items():
             print(f"Rendered {name} -> {path}")

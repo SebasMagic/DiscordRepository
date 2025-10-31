@@ -25,6 +25,23 @@ El comando anterior renderiza todos los *presets* definidos en el archivo
 python src/image_generator.py LIQUID_GOLD --output output
 ```
 
+También puedes controlar el comportamiento desde un archivo `.env` y nuevas
+banderas de CLI:
+
+```bash
+# Cargar variables desde un .env personalizado y usar un config alternativo
+python src/image_generator.py --env-file .env.local --config presets/custom.json
+```
+
+Las variables soportadas son:
+
+- `LIQUID_CONFIG_PATH`: ruta a un archivo de configuración JSON alternativo.
+- `LIQUID_OUTPUT_DIR`: carpeta de salida por defecto si no se pasa `--output`.
+- `LIQUID_PRESET`: nombre del preset a renderizar cuando no se proporciona
+  argumento posicional.
+
+Copia `.env.example` a `.env` para comenzar rápidamente.
+
 ## Características destacadas
 
 - Canvas 2048×2048 px a 300 dpi y fondo transparente.
